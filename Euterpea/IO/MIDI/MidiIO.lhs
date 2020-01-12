@@ -21,7 +21,7 @@
 >                        openInput, openOutput, readEvents,
 >                        close, writeShort, getErrorText, terminate, initialize,
 >                        PMStream, PMError (..),
->                        PMEvent (..), PMMsg (PMMsg), 
+>                        PMEvent (..), PMMsg (PMMsg),
 >                        encodeMsg, decodeMsg,
 >                        PMSuccess (..))
 > import Control.Exception (finally)
@@ -122,7 +122,7 @@ exists, an error is thrown.
 >   case i of
 >     Nothing -> error "No MIDI output device found"
 >     Just i  -> f (OutputDeviceID i) a
->
+
 > defaultInput :: (InputDeviceID -> a -> IO b) -> a -> IO b
 > defaultInput f a = do
 >   i <- getDefaultInputDeviceID
@@ -157,7 +157,7 @@ by devices.  We define them here.
 >       peek = do
 >         h <- get
 >         return $ Heap.viewHead h
->
+
 >   return $ PrioChannel get push pop peek
 
 
@@ -207,7 +207,7 @@ initializeMidi just initializes PortMidi
 > initializeMidi :: IO ()
 > initializeMidi = do
 >   e <- initialize
->   case e of 
+>   case e of
 >       Right _ -> return ()
 >       Left e' -> reportError "initializeMidi" e'
 
@@ -320,10 +320,9 @@ played.  Otherwise, it is queued for later.
 >   (pChan, out, _stop) <- getOutDev devId
 >   now <- getTimeNow
 >   let deliver t m = do
->       if t == 0
->         then out (now,m)
->         else push pChan (now+t) m
->
+>         if t == 0
+>           then out (now,m)
+>           else push pChan (now+t) m
 >   case m of
 >     Std m -> deliver t m
 >     ANote c k v d -> do
@@ -592,7 +591,7 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 >       let t' = t + 1000 * fromIntegral (t1 - t0) `div` (tpb * bps)
 >       in (t', m) : runTrack' t' t1 bps l
 >     runTrack' _ _ _ [] = []
->
+
 > playTrack s ch t0 = playTrack' 0
 >   where
 >     playTrack' t [] = putStrLn "done" >> putMVar ch Nothing >> return (round (t * 1.0E3))
@@ -651,4 +650,3 @@ A conversion function from PortMidi PMMsgs to Codec.Midi Messages.
 >               done <- callback (now + fromIntegral (t - t0) / 1E3, m')
 >               if done then close s >> return () else sendEvts (Just t0) now l
 >             Nothing -> sendEvts (Just t0) now l
-
